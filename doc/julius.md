@@ -1,37 +1,39 @@
-メインで触ったのがJuliusです。また、Watson Speech to textも扱ったのでJuliusとAPIの比較検証をする内容になっています。
-いずれも音声ファイルを認識させています。
+メインで触ったのがJuliusです。また、Watson Speech to textも扱ったのでJuliusとAPIの比較検証をする内容になっています。  
+いずれも音声ファイルを認識させています。  
 
-まずは最低限の環境構築を行います。
-Windows10でwslでUbuntuインストールします。↓下記記事参照
-https://qiita.com/Aruneko/items/c79810b0b015bebf30bb
-※Juliusのインストール時にgitを使うのでインストールをしておく、お好みでvimも
+まずは最低限の環境構築を行います。  
+Windows10でwslでUbuntuインストールします。↓下記記事参照  
+https://qiita.com/Aruneko/items/c79810b0b015bebf30bb  
+※Juliusのインストール時にgitを使うのでインストールをしておく、お好みでvimも  
 
-Ubuntuにphpをインストールします。↓下記記事参照
-https://laboradian.com/use-php72-with-ubuntu1604/
+Ubuntuにphpをインストールします。↓下記記事参照  
+https://laboradian.com/use-php72-with-ubuntu1604/  
 
-IBMの音声認識APIのWatson Speech to textを触ります。
-詳しくは↓
-https://www.ibm.com/watson/services/speech-to-text/
+IBMの音声認識APIのWatson Speech to textを触ります。  
+詳しくは↓  
+https://www.ibm.com/watson/services/speech-to-text/  
 
-はじめに
-https://cloud.ibm.com/login　でアカウント作成を行いログインをします。
-
-
-このチュートリアルに従います。
+はじめに  
+https://cloud.ibm.com/login　でアカウント作成を行いログインをします。  
 
 
-チュートリアルは英語の音声ファイルを使用しています。日本語の音声を認識させるためにはステップ2の赤丸部分を変更する必要があります。
-
-日本語のサンプル音声ファイルの準備をします。
-https://blog.apar.jp/web/9036/
-↓使用した音声ファイル　
+このチュートリアルに従います。  
 
 
+チュートリアルは英語の音声ファイルを使用しています。日本語の音声を認識させるためにはステップ2の赤丸部分を変更する必要があります。  
 
+日本語のサンプル音声ファイルの準備をします。  
+https://blog.apar.jp/web/9036/  
+↓使用した音声ファイル  
+
+
+```
 $ curl -X POST -u "apikey:{API鍵}" --header "Content-Type: audio/flac" --data-binary @{path_to_file}audio-file.flac "{url}/v1/recognize?model=ja-JP_BroadbandModel"
-上記の赤線部分を書き換えます。
+```  
+上記の赤線部分を書き換えます。  
  
-Watsonの認識結果
+Watsonの認識結果  
+```
 
 {
    "results": [
@@ -55,11 +57,12 @@ Watsonの認識結果
       }
    ],
    "result_index": 0
+```  
 
+次にPHPでWatson Speech to textを使います。  
 
-次にPHPでWatson Speech to textを使います。
-
-PHPコード
+PHPコード  
+```
 <?php
 
 $file = file_get_contents('/mnt/c/Users/h-saito/Downloads/senbeijiru.flac');
@@ -85,8 +88,10 @@ if (curl_errno($ch)) {
 curl_close($ch);
 print_r($result);
 ?>
+```  
 
-PHP Watsonの認識結果
+PHP Watsonの認識結果  
+```
 
 {
    "results": [
@@ -128,25 +133,26 @@ PHP Watsonの認識結果
       }
    ],
    "result_index": 0
-
-先ほどと同じ音声ファイルを使用しました。
-
-
-次にJuliusを使いました。
-UbuntuにJuliusをインストールし、認識させます。
-https://qiita.com/ekzemplaro/items/dcfd51c24f2c3a020c7b
-※julius音声ファイルはchannel1でサンプルレート16000である必要があります。
-ディレクトリをdictationkitに移動し実行する。またはパスを指定する。
- julius -C main.jconf -C am-gmm.jconf -input rawfile
-
-使用した音声ファイル
-$ wget http://sayonari.com/data/test_16000.wav
-をdictationkitのディレクトリでコマンドをたたきます。
-※flacだと動かないです。
-wgetがなかったら$ sudo apt install wgetをしてください。
+```  
+先ほどと同じ音声ファイルを使用しました。  
 
 
-Julius 認識結果
+次にJuliusを使いました。  
+UbuntuにJuliusをインストールし、認識させます。  
+https://qiita.com/ekzemplaro/items/dcfd51c24f2c3a020c7b  
+※julius音声ファイルはchannel1でサンプルレート16000である必要があります。  
+ディレクトリをdictationkitに移動し実行する。またはパスを指定する。  
+ ```julius -C main.jconf -C am-gmm.jconf -input rawfile```  
+
+使用した音声ファイル  
+```$ wget http://sayonari.com/data/test_16000.wav```  
+をdictationkitのディレクトリでコマンドをたたきます。  
+※flacだと動かないです。  
+wgetがなかったら```$ sudo apt install wget```をしてください。  
+
+
+Julius 認識結果  
+```
 pass1_best:  これ は マイク の テイスト です 。
 pass1_best_wordseq: <s> これ+代名詞 は+助詞 マイク+名詞 の+助詞 テイスト+名詞 です+助動詞 </s>
 pass1_best_phonemeseq: silB | k o r e | w a | m a i k u | n o | t e: s u t o | d e s u | silE
@@ -158,13 +164,16 @@ wseq1: <s> これ+代名詞 は+助詞 マイク+名詞 の+助詞 テスト+名
 phseq1: silB | k o r e | w a | m a i k u | n o | t e s u t o | d e s u | silE
 cmscore1: 0.517 0.687 0.481 0.570 0.323 0.187 0.734 1.000
 score1: -7960.165039
-これでJuliusが動きました。
+```  
 
-次にphpでJuliusを動かします。
-検索してたらPythonでやるスクリプトがあったのでこれをもとにPHPにかきかえました。
-↓使用した音声ファイル。
+これでJuliusが動きました。  
 
-Pythonスクリプト
+次にphpでJuliusを動かします。  
+検索してたらPythonでやるスクリプトがあったのでこれをもとにPHPにかきかえました。  
+↓使用した音声ファイル。  
+
+Pythonスクリプト  
+```
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Julius web server (with CherryPy:http://www.cherrypy.org/)
@@ -241,11 +250,11 @@ s.connect(("8.8.8.8", 80))
 server_ip = s.getsockname()[0]
 
 # start the CherryPy server
-
+```  
 後半はPHPに書き換えるときに関係ないです。
 
-phpで書き換え
-
+phpで書き換え  
+```
 <?php
 $JULIUS_HOME = "/home/h-saito/juius/.";
 $JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-gmm.jconf -input fil
@@ -282,9 +291,9 @@ $OUT_CHIKUM = 5;
                 echo "command returned $return_value\n";
 
 ?>
-
-PHP Julius 認識結果
-
+```  
+PHP Julius 認識結果  
+```
 STAT: 267568 samples (16.72 sec.)
 STAT: ### speech analysis (waveform -> MFCC)
 ### Recognition: 1st pass (LR beam)
@@ -299,21 +308,21 @@ wseq1: <s> Ｓ+記号 は+助詞 古来+名詞 茶+名詞 を+助詞 いただ�
 phseq1: silB | e s u | w a | k o r a i | ch a | o | i t a d a k i | m a sh i | t e | n a | sp | m a d a | sp | h a i | sp | k e N k o: | sp | g o | n e N | sp | j i | n i | sp | n a N | n o | o t o | n o | d e r u | m o n o | n o | d e N g e N | g a | o k i | sp | m a t a | sp | ky o g a k u | n o | n a i | r o k u o N | sp | s a t e | sp | g o | n i N | ry o k a k u | k i | n i | k a m a | n o | k o: | ky o: i k u | sp | y o N | sp | e s u | silE
 cmscore1: 1.000 0.211 0.304 0.093 0.072 0.277 0.728 0.210 0.241 0.049 0.237 0.007 0.207 0.072 0.688 0.108 0.072 0.274 0.024 0.937 0.093 0.017 0.642 0.266 0.321 0.370 0.355 0.035 0.329 0.904 0.168 0.883 0.069 0.419 0.573 0.075 0.065 0.425 0.165 0.599 0.012 0.042 0.732 0.362 0.017 0.384 0.034 0.057 0.066 0.559 0.022 0.203 0.035 0.337 0.594 0.011 1.000
 score1: -53826.011719
+```  
 
-
-音響モデルをGMMからDNNに変えました。
-DNNとは
-DNN (Deep Neural Network)のシステムでは高精度な音響モデルを使用します。そのため処理が重くなり，手順も複雑になりますが，GMM版よりも認識精度が向上します。
-GMMからDNNへの変え方
-GMM
-$JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-gmm.jconf -input file";
-DNN
+音響モデルをGMMからDNNに変えました。  
+DNNとは  
+DNN (Deep Neural Network)のシステムでは高精度な音響モデルを使用します。そのため処理が重くなり，手順も複雑になりますが，GMM版よりも認識精度が向上します。  
+GMMからDNNへの変え方  
+GMM  
+$JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-gmm.jconf -input file";  
+DNN  
 $JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-dnn.jconf -dnnconf .
-/julius-4.4.2.1/dictation-kit-v4.4/julius.dnnconf -input file";
+/julius-4.4.2.1/dictation-kit-v4.4/julius.dnnconf -input file";  
 
 
-DNN　認識結果
-
+DNN　認識結果  
+```
 STAT: 267568 samples (16.72 sec.)
 STAT: ### speech analysis (waveform -> MFCC)
 ### Recognition: 1st pass (LR beam)
@@ -330,12 +339,13 @@ wseq1: <s> 本日+名詞 は+助詞 ご+接頭辞 来場+名詞 いただき+動
 phseq1: sp_S | h_B o_I N_I j_I i_I ts_I u_E | w_B a_E | g_B o_E | r_B a_I i_I j_I o:_E | i_B t_I a_I d_I a_I k_I i_E | m_B a_I sh_I i_I t_I e_E | m_B a_I k_I i_E | n_B o_E | n_B a_I k_I a_E | g_B a_E | t_B a_I i_I g_I a_I k_I u_E | k_B a_I i_I g_I i_E | n_B i_E | s_B a_I k_I i_I d_I a_I ch_I i_E | m_B a_I sh_I i_E | t_B e_E | sp_S | o_S | ky_B a_I k_I u_E | s_B a_I m_I a_E | n_B i_E | o_S | n_B e_I g_I a_I i_E | m_B o_E | sh_B i_E | t_B e_E | a_B g_I e_E | m_B a_I s_I u_E | k_B e:_I t_I a_I i_E | d_B e_I N_I w_I a_E | n_B a_I d_I o_E | o_B t_I o_E | n_B o_E | d_B e_I r_I u_E | m_B o_I n_I o_E | n_B o_E | d_B e_I N_I g_I e_I N_E | o_S | k_B i_I r_I i_E | k_B u_I d_I a_I s_I a_I i_E | m_B a_I n_I a:_E | ky_B o_I k_I a_E | n_B o_E | n_B a_I i_E | r_B o_I k_I u_I o_I N_E | s_B a_I ts_I u_I e:_E | w_B a_E | g_B o_E | e_B N_I ry_I o_E | k_B u_I d_I a_I s_I a_I i_E | m_B i_I n_I a_E | s_B a_I m_I a_E | n_B o_E | g_B o_E | ky_B o:_I ry_I o_I k_I u_E | o_S | y_B o_I r_I o_I sh_I i_I k_I u_E | w_B a_I r_I a_I i_E | sp_S
 cmscore1: 1.000 0.924 0.529 0.982 0.881 0.188 0.775 0.009 0.854 0.037 0.170 0.017 0.543 0.813 0.991 0.774 0.689 0.741 0.668 0.946 0.590 0.156 0.938 0.743 0.096 0.961 0.018 0.089 0.355 0.990 0.009 0.790 0.880 0.403 0.179 0.485 0.965 0.992 0.522 0.109 0.535 0.030 0.475 0.956 0.310 0.815 0.775 0.934 0.908 0.998 0.330 0.942 0.509 0.889 0.758 0.894 0.123 0.765 0.007 1.000
 score1: 955.145691
+```  
+体感15～20秒ほどGMMより実行に時間かかりますが、認識精度は高くなることを確認できました。  
 
-体感15～20秒ほどGMMより実行に時間かかりますが、認識精度は高くなることを確認できました。
+同じ音声ファイルを使い、Watsonでもやってみました。  
 
-同じ音声ファイルを使い、Watsonでもやってみました。
-
-Watson 認識結果
+Watson 認識結果  
+```
 {
    "results": [
       {
@@ -370,11 +380,12 @@ Watson 認識結果
             {
                "confidence": 0.85,
 
-Juliusよりも認識精度が高いことがわかります。
+```  
+Juliusよりも認識精度が高いことがわかります。  
 
-WatsonとJuliusの認識結果比較
-Watsonの方がJuliusよりも認識精度高いことがわかりました。
+WatsonとJuliusの認識結果比較  
+Watsonの方がJuliusよりも認識精度高いことがわかりました。  
 素の状態でも結構イケる。単語単体で発話よりも文章にするとより認識精度が上がる。(まずは単語単体を認識してから文章で補正するからみたい)
-つまりまとめると、言語モデルは音声を文字へ変換する際にどの単語や例文が近いかを判断するための材料(ボキャブラリー)を拡充するもの、テキストなので理解しやすくデータ量を増すほどよさそう。音響モデルは音源の波形から単語を認識する波長や振幅や間隔をチューニングするもの、音声認識の仕組の知識がないとチューニングが難しいかもしれませんね
-長い文章だとAPIの良さがでたs。
+つまりまとめると、言語モデルは音声を文字へ変換する際にどの単語や例文が近いかを判断するための材料(ボキャブラリー)を拡充するもの、テキストなので理解しやすくデータ量を増すほどよさそう。音響モデルは音源の波形から単語を認識する波長や振幅や間隔をチューニングするもの、音声認識の仕組の知識がないとチューニングが難しいかもしれませんね。  
+長い文章だとAPIの良さがでた。
 Juliusは短文に強い。
