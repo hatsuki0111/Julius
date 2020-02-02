@@ -1,4 +1,3 @@
-
 メインで触ったのがJuliusです。また、Watson Speech to textも扱ったのでJuliusとAPIの比較検証をする内容になっています。
 いずれも音声ファイルを認識させています。
 
