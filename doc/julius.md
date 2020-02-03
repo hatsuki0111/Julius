@@ -75,7 +75,7 @@ curl_setopt($ch, CURLOPT_URL, $url . '?model=' . $model);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
 curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_USERPWD, 'apikey' . ':' . 'jz8SycP4mL0Mlxm0k5D2x0zJg-jpNMS20tSt58-nIK_r');
+curl_setopt($ch, CURLOPT_USERPWD, 'apikey' . ':' . 'jz8S58-nIK_r');
 
 $headers = array();
 $headers[] = 'Content-Type: audio/flac';
