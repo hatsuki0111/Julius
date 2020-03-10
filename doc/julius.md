@@ -75,7 +75,7 @@ curl_setopt($ch, CURLOPT_URL, $url . '?model=' . $model);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
 curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_USERPWD, 'apikey' . ':' . 'jz8S58-nIK_r');
+curl_setopt($ch, CURLOPT_USERPWD, 'apikey' . ':' . 'jz8S58TekitouAPI-ka');
 
 $headers = array();
 $headers[] = 'Content-Type: audio/flac';
@@ -315,10 +315,15 @@ DNNとは
 DNN (Deep Neural Network)のシステムでは高精度な音響モデルを使用します。そのため処理が重くなり，手順も複雑になりますが，GMM版よりも認識精度が向上します。  
 GMMからDNNへの変え方  
 GMM  
-$JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-gmm.jconf -input file";  
+```
+$JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-gmm.jconf -input file"; 
+```  
+
 DNN  
+```
 $JULIUS_EXEC = "julius -C ./julius-4.4.2.1/dictation-kit-v4.4/main.jconf -C ./julius-4.4.2.1/dictation-kit-v4.4/am-dnn.jconf -dnnconf .
-/julius-4.4.2.1/dictation-kit-v4.4/julius.dnnconf -input file";  
+/julius-4.4.2.1/dictation-kit-v4.4/julius.dnnconf -input file";
+```  
 
 
 DNN　認識結果  
