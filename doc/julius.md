@@ -145,6 +145,8 @@ https://qiita.com/ekzemplaro/items/dcfd51c24f2c3a020c7b
  ```julius -C main.jconf -C am-gmm.jconf -input rawfile```  
 
 使用した音声ファイル  
+https://github.com/sayonari/julius_post  
+
 ```$ wget http://sayonari.com/data/test_16000.wav```  
 をdictationkitのディレクトリでコマンドをたたきます。  
 ※flacだと動かないです。  
